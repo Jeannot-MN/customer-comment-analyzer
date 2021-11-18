@@ -1,5 +1,11 @@
 package com.ikhokha.techcheck;
 
+import com.ikhokha.techcheck.builder.MoverCommentMetricBuilder;
+import com.ikhokha.techcheck.builder.QuestionsCommentMetricBuilder;
+import com.ikhokha.techcheck.builder.ShakerCommentMetricBuilder;
+import com.ikhokha.techcheck.builder.ShortCommentMetricBuilder;
+import com.ikhokha.techcheck.builder.SpamCommentMetricBuilder;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,58 +15,47 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CommentAnalyzer {
-	
-	private File file;
-	
-	public CommentAnalyzer(File file) {
-		this.file = file;
-	}
-	
-	public Map<String, Integer> analyze() {
-		
-		Map<String, Integer> resultsMap = new HashMap<>();
-		
-		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-			
-			String line = null;
-			while ((line = reader.readLine()) != null) {
-				
-				if (line.length() < 15) {
-					
-					incOccurrence(resultsMap, "SHORTER_THAN_15");
 
-				} else if (line.contains("Mover")) {
+    private File file;
 
-					incOccurrence(resultsMap, "MOVER_MENTIONS");
-				
-				} else if (line.contains("Shaker")) {
+    private final ShortCommentMetricBuilder shortCommentMetricBuilder;
+    private final ShakerCommentMetricBuilder shakerCommentMetricBuilder;
+    private final MoverCommentMetricBuilder moverCommentMetricBuilder;
+    private final QuestionsCommentMetricBuilder questionsCommentMetricBuilder;
+    private final SpamCommentMetricBuilder spamCommentMetricBuilder;
 
-					incOccurrence(resultsMap, "SHAKER_MENTIONS");
-				
-				}
-			}
-			
-		} catch (FileNotFoundException e) {
-			System.out.println("File not found: " + file.getAbsolutePath());
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.out.println("IO Error processing file: " + file.getAbsolutePath());
-			e.printStackTrace();
-		}
-		
-		return resultsMap;
-		
-	}
-	
-	/**
-	 * This method increments a counter by 1 for a match type on the countMap. Uninitialized keys will be set to 1
-	 * @param countMap the map that keeps track of counts
-	 * @param key the key for the value to increment
-	 */
-	private void incOccurrence(Map<String, Integer> countMap, String key) {
-		
-		countMap.putIfAbsent(key, 0);
-		countMap.put(key, countMap.get(key) + 1);
-	}
+    public CommentAnalyzer(File file) {
+        this.file = file;
+        moverCommentMetricBuilder = new MoverCommentMetricBuilder();
+        shakerCommentMetricBuilder = new ShakerCommentMetricBuilder();
+        shortCommentMetricBuilder = new ShortCommentMetricBuilder();
+        questionsCommentMetricBuilder = new QuestionsCommentMetricBuilder();
+        spamCommentMetricBuilder = new SpamCommentMetricBuilder();
+    }
 
+    public Map<String, Integer> analyze() {
+
+        Map<String, Integer> resultsMap = new HashMap<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                shortCommentMetricBuilder.build(line, resultsMap);
+                shakerCommentMetricBuilder.build(line, resultsMap);
+                moverCommentMetricBuilder.build(line, resultsMap);
+                spamCommentMetricBuilder.build(line, resultsMap);
+                questionsCommentMetricBuilder.build(line, resultsMap);
+            }
+
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found: " + file.getAbsolutePath());
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println("IO Error processing file: " + file.getAbsolutePath());
+            e.printStackTrace();
+        }
+
+        return resultsMap;
+    }
 }
