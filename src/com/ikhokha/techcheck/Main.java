@@ -10,7 +10,7 @@ import java.util.concurrent.Executors;
 
 public class Main {
 
-    private static int MAX_NUMBER_OF_THREADS = 5;
+    private static final int MAX_NUMBER_OF_THREADS = 5;
 
     public static void main(String[] args) {
 
