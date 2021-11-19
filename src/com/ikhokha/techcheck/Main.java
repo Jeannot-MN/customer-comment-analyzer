@@ -10,6 +10,8 @@ import java.util.concurrent.Executors;
 
 public class Main {
 
+    private static int MAX_NUMBER_OF_THREADS = 5;
+
     public static void main(String[] args) {
 
         Map<String, Integer> totalResults = new HashMap<>();
@@ -17,7 +19,7 @@ public class Main {
         File docPath = new File("docs");
         File[] commentFiles = docPath.listFiles((d, n) -> n.endsWith(".txt"));
 
-        ExecutorService executor = Executors.newFixedThreadPool(5);
+        ExecutorService executor = Executors.newFixedThreadPool(MAX_NUMBER_OF_THREADS);
         for (File commentFile : commentFiles) {
 
             Runnable worker = new WorkerThread(commentFile, totalResults);
