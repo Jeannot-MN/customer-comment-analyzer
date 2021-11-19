@@ -4,7 +4,7 @@ import com.ikhokha.techcheck.builder.abstraction.KeyWordMetricBuilder;
 
 public class QuestionsCommentMetricBuilder extends KeyWordMetricBuilder {
 
-    private static final String SHAKER_KEYWORD = "?";
+    private static final String QUESTION_MARK = "?";
     private static final String METRIC_KEY = "QUESTIONS";
 
     @Override
@@ -14,6 +14,6 @@ public class QuestionsCommentMetricBuilder extends KeyWordMetricBuilder {
 
     @Override
     protected String getKeyWord() {
-        return SHAKER_KEYWORD;
+        return QUESTION_MARK;
     }
 }
